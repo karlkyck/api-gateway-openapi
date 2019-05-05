@@ -1,0 +1,93 @@
+---
+openapi: 3.0.0
+info:
+  title: API Gateway OpenAPI Example
+  version: 1.0.0
+
+paths:
+  /api/posts:
+    get:
+      summary: List Posts
+      operationId: listPosts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/CreatePostRequestBody'
+      responses:
+        '200':
+          description: Retrieve the list of Posts
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/ListPostsResponseBody'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListPostsFunction.Arn}/invocations
+        httpMethod: POST
+        type: aws_proxy
+    post:
+      summary: Create a new Post
+      operationId: createPost
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Post'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreatePostFunction.Arn}/invocations
+        httpMethod: POST
+        type: aws_proxy
+
+components:
+  schemas:
+    BasePost:
+      type: object
+      required:
+        - title
+        - description
+        - publishedDate
+        - content
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        publishedDate:
+          type: string
+          format: date-time
+        content:
+          type: string
+    Post:
+      allOf:
+        - $ref: '#/components/schemas/BasePost'
+        - type: object
+          required:
+            - id
+            - createdDate
+            - updatedDate
+          properties:
+            id:
+              type: string
+            createdDate:
+              type: string
+              format: date-time
+            updatedDate:
+              type: string
+              format: date-time
+    CreatePostRequestBody:
+      allOf:
+        - $ref: '#/components/schemas/BasePost'
+        - type: object
+          required:
+            - title
+            - description
+            - publishedDate
+            - content
+    ListPostsResponseBody:
+      type: array
+      $ref: '#/components/schemas/Post'
