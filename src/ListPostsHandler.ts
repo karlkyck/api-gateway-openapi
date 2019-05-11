@@ -1,4 +1,4 @@
-import { APIGatewayEvent, APIGatewayProxyResult, Callback, Context, Handler } from 'aws-lambda';
+import { APIGatewayProxyResult, Handler } from 'aws-lambda';
 
 const posts = [
 	{
@@ -21,12 +21,14 @@ const posts = [
 	}
 ];
 
-export const handler: Handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-	try {
-		sendResponse(callback, createListPostsResponse());
-	} catch (error) {
-		sendResponse(callback, createErrorResponse());
-	}
+export const handler: Handler = async () => {
+	return Promise
+		.resolve()
+		.then(() => createListPostsResponse())
+		.catch(error => {
+			console.error(new Error(error));
+			createErrorResponse();
+		});
 };
 
 const createListPostsResponse = (): APIGatewayProxyResult => {
@@ -45,11 +47,4 @@ const createErrorResponse = (): APIGatewayProxyResult => {
 		statusCode: 500,
 		body: JSON.stringify(errorResponseBody)
 	};
-};
-
-const sendResponse = (callback: Callback, response: APIGatewayProxyResult) => {
-	callback(
-		null,
-		response
-	);
 };

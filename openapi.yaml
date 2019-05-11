@@ -84,4 +84,5 @@ components:
         - $ref: '#/components/schemas/BasePost'
     ListPostsResponseBody:
       type: array
-      $ref: '#/components/schemas/Post'
+      items:
+        $ref: '#/components/schemas/Post'

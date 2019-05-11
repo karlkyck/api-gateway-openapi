@@ -5,11 +5,9 @@ describe('ListPostsHandler', () => {
 	describe('handler', () => {
 
 		it('should succeed', async () => {
-			const mockCallback = jest.fn();
-			handler(null, null, mockCallback);
+			const response = await handler(null, null, null);
 
-			expect(mockCallback).toHaveBeenCalledWith(
-				null,
+			expect(response).toEqual(
 				{
 					statusCode: 200,
 					body: JSON.stringify([
