@@ -82,31 +82,26 @@ aws cloudformation deploy \
 --stack-name api-gateway-openapi \
 --capabilities CAPABILITY_IAM \
 --parameter-overrides \
-DeploymentBucket=<YOUR DEPLOYMENT BUCKET NAME GOES HERE> \
-ApiIpWhitelist=<YOUR COMMA SEPARATED WHITELIST IPS GO HERE>
+DeploymentBucket=<YOUR DEPLOYMENT BUCKET NAME GOES HERE>
 ```
 
 ## Consume the API
 
 Retrieve your API Gateway URL using the [AWS Console](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-call-api.html#apigateway-how-to-call-rest-api)
 
-```
-curl https://<YOUR API GATEWAY URL GOES HERE>/live/api/example
-```
-
-If you invoke this from a whitelisted IP then you should receive the following response:
+The following will retrieve a list of Posts
 
 ```
-{
-    "message": "Hello World"
-}
+curl https://<YOUR API GATEWAY URL GOES HERE>/live/api/posts
 ```
 
-If you invoke this from a non-whitelisted IP then you should receive the following response:
+The following will 'create' a Post
 
 ```
-{
-    "Message": "User: anonymous is not authorized to perform: execute-api:Invoke on resource: <YOU API GATEWAY API ARN>/live/GET/api/example"
-}
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{ "title": "Mock Title", "description": "Mock Description", "publishedDate": "2019-06-05T10:14:02Z", "content": "Mock Content" }' \
+  https://<YOUR API GATEWAY URL GOES HERE>/live/api/posts
 ```
- 
+
+The list of Posts are hardcoded and no state is shared between the ListPostsLambda and CreatePostLambda so Posts you 'create' with the POST request will not appear in the GET request.
