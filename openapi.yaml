@@ -82,12 +82,6 @@ components:
     CreatePostRequestBody:
       allOf:
         - $ref: '#/components/schemas/BasePost'
-        - type: object
-          required:
-            - title
-            - description
-            - publishedDate
-            - content
     ListPostsResponseBody:
       type: array
       $ref: '#/components/schemas/Post'
